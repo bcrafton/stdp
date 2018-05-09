@@ -51,9 +51,8 @@ S0 = Synapses(input, neurons,
                     Apre += dApre
                     w = clip(w + Apost, 0, gmax)''',
              on_post='''
-                    ge -= w
                     Apost += dApost
-                    w = clip(w + dApre, 0, gmax)''',
+                    w = clip(w + Apre, 0, gmax)''',
              )
 S0.connect()
 S0.w = 'rand() * gmax'
@@ -77,9 +76,8 @@ S1 = Synapses(neurons, output,
                     Apre += dApre
                     w = clip(w + Apost, 0, gmax)''',
              on_post='''
-                    ge -= w
                     Apost += dApost
-                    w = clip(w + dApre, 0, gmax)''',
+                    w = clip(w + Apre, 0, gmax)''',
              )
 S1.connect()
 S1.w = 'rand() * gmax'
