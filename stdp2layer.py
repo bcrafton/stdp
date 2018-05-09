@@ -74,13 +74,13 @@ S1 = Synapses(neurons, output,
              on_pre='''
                     ge += w
                     Apre += dApre
-                    w = clip(w + Apost, 0, gmax)''',
+                    w = clip(w + Apost, 0, 0.1)''',
              on_post='''
                     Apost += dApost
-                    w = clip(w + Apre, 0, gmax)''',
+                    w = clip(w + Apre, 0, 0.1)''',
              )
 S1.connect()
-S1.w = 'rand() * gmax'
+S1.w = 'rand() * 0.1'
 
 # pretty sure [0,1] is the range of the weight to record.
 # mon = StateMonitor(S0, 'w', record=[0, 1])
@@ -117,7 +117,7 @@ subplot(412)
 plot(spike_plot_x0, spike_plot_y0, '.k')
 
 subplot(413)
-plot(mon1.t/second, mon1.w.T/gmax)
+plot(mon1.t/second, mon1.w.T/0.1)
 xlabel('Time (s)')
 ylabel('Weight / gmax')
 
