@@ -74,9 +74,20 @@ S1.w = 'rand() * gmax'
 
 mon = StateMonitor(S1, 'w', record=range(10))
 
+spike_mon = SpikeMonitor(output)
+
 ###########################
 
 run(2*second, report='text')
+
+spike_plot_x = []
+spike_plot_y = []
+trains = spike_mon.spike_trains()
+for i in trains:
+  spike_plot_x.extend(trains[i])
+  sz = len(trains[i])
+  vals = [i] * sz
+  spike_plot_y.extend( vals )
 
 '''
 print len(mon.w)
@@ -89,11 +100,15 @@ print len(mon.w.T)
 # so we think that its # seconds * 1000 (ms granularity)
 # but we dont know whats actualy inside there.
 
-# [1] > [0]
+subplot(311)
 plot(mon.t/second, mon.w.T/gmax)
 xlabel('Time (s)')
 ylabel('Weight / gmax')
 
+subplot(312)
+plot(spike_plot_x, spike_plot_y, '.k')
+
+tight_layout()
 show()
 
 
