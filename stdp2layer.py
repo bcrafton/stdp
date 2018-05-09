@@ -1,11 +1,18 @@
 from brian2 import *
 
-def avg_weight(S):
-  tot = 0.0
-  for i in range(N):
-    tot = tot + (S.w[i] / gmax)
-  avg = tot / N
-  print(avg)
+def spike_plot(spike_mon):
+  spike_plot_x = []
+  spike_plot_y = []
+  trains = spike_mon.spike_trains()
+  for i in trains:
+    spike_plot_x.extend(trains[i])
+
+    sz = len(trains[i])
+    vals = [i] * sz
+    spike_plot_y.extend( vals )
+  
+  return spike_plot_x, spike_plot_y
+  
 
 N = 1000
 taum = 10*ms
@@ -52,6 +59,9 @@ S0.w = 'rand() * gmax'
 # NOOO [0,1] was actually record index 0 and 1...
 # so we were just looking at indexes 0 and 1.
 
+mon0 = StateMonitor(S0, 'w', record=range(100))
+spike_mon0 = SpikeMonitor(neurons)
+
 ###########################
 
 S1 = Synapses(neurons, output,
@@ -72,22 +82,15 @@ S1.w = 'rand() * gmax'
 # NOOO [0,1] was actually record index 0 and 1...
 # so we were just looking at indexes 0 and 1.
 
-mon = StateMonitor(S1, 'w', record=range(10))
-
-spike_mon = SpikeMonitor(output)
+mon1 = StateMonitor(S1, 'w', record=range(10))
+spike_mon1 = SpikeMonitor(output)
 
 ###########################
 
 run(2*second, report='text')
 
-spike_plot_x = []
-spike_plot_y = []
-trains = spike_mon.spike_trains()
-for i in trains:
-  spike_plot_x.extend(trains[i])
-  sz = len(trains[i])
-  vals = [i] * sz
-  spike_plot_y.extend( vals )
+spike_plot_x0, spike_plot_y0 = spike_plot(spike_mon0)
+spike_plot_x1, spike_plot_y1 = spike_plot(spike_mon1)
 
 '''
 print len(mon.w)
@@ -100,13 +103,21 @@ print len(mon.w.T)
 # so we think that its # seconds * 1000 (ms granularity)
 # but we dont know whats actualy inside there.
 
-subplot(311)
-plot(mon.t/second, mon.w.T/gmax)
+subplot(411)
+plot(mon0.t/second, mon0.w.T/gmax)
 xlabel('Time (s)')
 ylabel('Weight / gmax')
 
-subplot(312)
-plot(spike_plot_x, spike_plot_y, '.k')
+subplot(412)
+plot(spike_plot_x0, spike_plot_y0, '.k')
+
+subplot(413)
+plot(mon1.t/second, mon1.w.T/gmax)
+xlabel('Time (s)')
+ylabel('Weight / gmax')
+
+subplot(414)
+plot(spike_plot_x1, spike_plot_y1, '.k')
 
 tight_layout()
 show()
