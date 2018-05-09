@@ -12,19 +12,20 @@ def spike_plot(spike_mon):
     spike_plot_y.extend( vals )
   
   return spike_plot_x, spike_plot_y
-  
 
-N = 1000
 taum = 10*ms
 taupre = 20*ms
-taupost = 10*ms
+taupost = 20*ms
+
 Ee = 0*mV
 vt = -54*mV
 vr = -60*mV
 El = -74*mV
 taue = 5*ms
+
 F = 15*Hz
 gmax = .01
+
 dApre = .01
 dApost = -dApre * (taupre / taupost) * 1.05
 dApost *= gmax
@@ -45,10 +46,13 @@ S0 = Synapses(input, neurons,
              '''w : 1
                 dApre/dt = -Apre / taupre : 1 (event-driven)
                 dApost/dt = -Apost / taupost : 1 (event-driven)''',
-             on_pre='''ge += w
+             on_pre='''
+                    ge += w
                     Apre += dApre
                     w = clip(w + Apost, 0, gmax)''',
-             on_post='''Apost += dApost
+             on_post='''
+                    ge -= w
+                    Apost += dApost
                     w = clip(w + dApre, 0, gmax)''',
              )
 S0.connect()
@@ -68,10 +72,13 @@ S1 = Synapses(neurons, output,
              '''w : 1
                 dApre/dt = -Apre / taupre : 1 (event-driven)
                 dApost/dt = -Apost / taupost : 1 (event-driven)''',
-             on_pre='''ge += w
+             on_pre='''
+                    ge += w
                     Apre += dApre
                     w = clip(w + Apost, 0, gmax)''',
-             on_post='''Apost += dApost
+             on_post='''
+                    ge -= w
+                    Apost += dApost
                     w = clip(w + dApre, 0, gmax)''',
              )
 S1.connect()
